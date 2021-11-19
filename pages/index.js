@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 import styles from "../styles/Home.module.css";
-import Client from "shopify-buy";
 
 export default function Home({ products }) {
     return (
@@ -16,10 +16,7 @@ export default function Home({ products }) {
             </Head>
 
             <main className={styles.main}>
-                <h1 className={styles.title}>
-                    Welcome to <a href="https://nextjs.org">Next.js!</a> Shopify
-                    Storefront API Store
-                </h1>
+                <h1 className={styles.title}>Shopify Storefront API Store</h1>
 
                 <div className={styles.grid}>
                     {products.map((product) => (
@@ -33,10 +30,11 @@ export default function Home({ products }) {
                                 width={250}
                                 height={250}
                             />
-                            {console.log(product.node.images)}
-                            <h2 className={styles.cardTitle}>
-                                {product.node.title}
-                            </h2>
+                            <Link href={`/${product.node.handle}`} passHref>
+                                <h2 className={styles.cardTitle}>
+                                    {product.node.title}
+                                </h2>
+                            </Link>
                             <p className={styles.cardDescription}>
                                 Description
                             </p>
@@ -108,23 +106,3 @@ export async function getStaticProps(context) {
         revalidate: 10,
     };
 }
-
-// export async function getStaticProps(context) {
-//     let products = [];
-//     try {
-//         const client = Client.buildClient({
-//             storefrontAccessToken: process.env.SHOPIFY_API_KEY,
-//             domain: process.env.SHOPIFY_API_ENDPOINT,
-//         });
-
-//         products = await client.product.fetchAll();
-//         console.log(products);
-//     } catch (error) {
-//         console.error(error);
-//     }
-//     return {
-//         props: {
-//             products: products,
-//         },
-//     };
-// }
