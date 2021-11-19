@@ -4,18 +4,18 @@ import styles from "../styles/Home.module.css";
 
 const Product = ({ product }) => {
     return (
-        <div className={styles.card} key={product?.node.id}>
+        <div className={styles.card} key={product?.id}>
             <Image
-                src={product?.node.images.edges[0].node.originalSrc}
-                alt={product?.node.title}
+                src={product?.images.edges[0].node.originalSrc}
+                alt={product?.title}
                 width={250}
                 height={250}
             />
             {/* {console.log(product)} */}
-            <h2 className={styles.cardTitle}>{product?.node.title}</h2>
-            <p className={styles.cardDescription}>Description</p>
+            <h2 className={styles.cardTitle}>{product?.title}</h2>
+            <p className={styles.cardDescription}>{product?.description}</p>
             <p className={styles.cardPrice}>
-                {product?.node.priceRange.minVariantPrice.amount}
+                {product?.priceRange.minVariantPrice.amount}
             </p>
             <p className={styles.cardButton}>Add to Cart</p>
         </div>
@@ -37,7 +37,7 @@ export async function getStaticPaths() {
             body: JSON.stringify({
                 query: `
                 {
-                    products() {
+                    products(first: 25) {
                       edges {
                         node {
                           id
@@ -94,71 +94,28 @@ export async function getStaticProps(context) {
             },
             body: JSON.stringify({
                 query: `{
-                    productByHandle(handle: "${handle}") {
-                        collections(first: 1) {
-                          edges {
-                          node {
-                            products(first: 5) {
-                              edges {
-                                node {
-                                  priceRange {
-                                    minVariantPrice {
-                                      amount
-                                    }
-                                  }
-                                  handle
-                                  title
-                                  id
-                                  images(first: 5) {
-                                    edges {
-                                      node {
-                                        originalSrc
-                                        altText
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                        }
-                      id
-                      title
-                      handle
-                      description
-                      images(first: 5) {
-                        edges {
-                          node {
-                            originalSrc
-                            altText
-                          }
-                        }
-                      }
-                      options {
-                        name
-                        values
-                        id
-                      }
-                      variants(first: 25) {
-                        edges {
-                          node {
-                            selectedOptions {
-                              name
-                              value
-                            }
-                            image {
-                              originalSrc
-                              altText
-                            }
-                            title
-                            id
-                            priceV2 {
+                    product(handle: "${handle}") {
+                      
+                
+                          id
+                          title
+                          handle
+                          description
+                          priceRange {
+                            minVariantPrice {
                               amount
                             }
                           }
-                        }
-                      }
+                          images(first: 5) {
+                            edges {
+                              node {
+                                originalSrc
+                                altText
+                              }
+                            }
+                          }
+                        
+                      
                     }
                   }
                 `,
@@ -168,9 +125,8 @@ export async function getStaticProps(context) {
 
     const response = await res.json();
     console.log(response);
-    const product = response.data.productByHandle
-        ? response.data.productByHandle
-        : [];
+
+    const product = response.data.product ? response.data.product : [];
 
     return {
         props: {
